@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "译伴 Lite · 双语字幕与网页翻译",
+  "version": "0.2.0",
+  "description": "用本地小模型在 YouTube 显示双语字幕，为网页添加对照译文。文本不经过任何云端服务。",
+  "minimum_chrome_version": "116",
+  "permissions": ["storage", "activeTab", "scripting", "offscreen"],
+  "host_permissions": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "action": { "default_popup": "popup.html", "default_title": "译伴 Lite" },
+  "options_ui": { "page": "popup.html?settings=1", "open_in_tab": true },
+  "icons": { "16": "assets/icon16.png", "48": "assets/icon48.png", "128": "assets/icon128.png" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+      "js": ["bridge.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'" }
+}

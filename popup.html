@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>译伴 Lite · 让理解，跟上播放</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="app-header">
+      <div class="brand-icon" aria-hidden="true"><span>译</span><small>A</small></div>
+      <div class="brand"><h1>译伴 <span>Lite</span></h1><p>让理解，跟上播放。</p></div>
+      <button class="icon-button" id="open-settings" title="在新标签页打开设置" aria-label="在新标签页打开设置">↗</button>
+    </header>
+    <div class="preview-label" id="preview-label" hidden>界面预览 · 加载扩展后可操作当前网页</div>
+    <nav class="tabs" aria-label="设置分类">
+      <button class="tab active" data-panel="home" aria-selected="true">翻译</button>
+      <button class="tab" data-panel="models" aria-selected="false">模型连接</button>
+      <button class="tab" data-panel="display" aria-selected="false">字幕样式</button>
+    </nav>
+    <main>
+      <section id="panel-home" class="panel">
+        <div class="eyebrow">当前页面 <span id="page-type">按需开启 · 由你掌控</span></div>
+        <div class="feature-card">
+          <div class="feature-heading"><span class="feature-icon">CC</span><div><h2>双语字幕</h2><p>YouTube · 原文与译文同步显示</p></div><label class="switch"><input id="subtitles" type="checkbox" aria-label="当前视频双语字幕"><span></span></label></div>
+          <div class="card-detail"><span class="dot"></span><span id="subtitle-status">开启后读取英文 CC 字幕</span></div>
+        </div>
+        <div class="feature-card page-card">
+          <div class="feature-heading"><span class="feature-icon text-icon">文</span><div><h2>网页对照翻译</h2><p>保留正文，逐段添加译文</p></div></div>
+          <div class="action-row"><button class="primary" id="translate-page">翻译当前网页 <span>↗</span></button><button class="secondary" id="restore-page">恢复原文</button></div>
+          <p class="quiet" id="page-status">只翻译阅读区域，随滚动加载。</p>
+        </div>
+        <div class="section-label">翻译偏好</div>
+        <div class="settings-card">
+          <label class="setting-row"><span><b>原文语言</b><small>字幕请与播放器语言一致</small></span><select id="source-language" aria-label="原文语言"></select></label>
+          <label class="setting-row"><span><b>翻译语言</b></span><select id="target-language" aria-label="翻译语言"></select></label>
+          <label class="setting-row"><span><b>自动开启双语字幕</b><small>之后打开 YouTube 视频时生效</small></span><span class="switch"><input id="auto-subtitles" type="checkbox" aria-label="自动开启双语字幕"><span></span></span></label>
+        </div>
+        <button class="connection-card" id="goto-models"><span class="model-indicator">⌘</span><span><b id="active-model-name">本地模型</b><small id="active-model-detail">Ollama · HY-MT2 1.8B</small></span><span class="connection-tag" id="connection-tag">待检测</span><span class="chevron">›</span></button>
+        <button class="save-preferences secondary full" id="save-preferences">保存翻译偏好</button>
+      </section>
+      <section id="panel-models" class="panel" hidden>
+        <div class="section-intro"><div class="eyebrow">本地模型，文本不出局域网</div><h2>连接翻译模型</h2><p>Ollama，或 LM Studio、llama.cpp 等 OpenAI 兼容接口。</p></div>
+        <form id="model-form" class="model-form">
+          <label class="field">接口协议<select id="protocol"><option value="ollama">Ollama 原生接口</option><option value="openai">OpenAI 兼容 · Chat Completions</option></select></label>
+          <label class="field">Base URL<input id="base-url" type="url" required spellcheck="false" autocomplete="off" placeholder="http://127.0.0.1:11434"><small id="url-hint">只支持本机或局域网地址。OpenAI 兼容接口填到 /v1。</small></label>
+          <label class="field">模型名称<input id="model" required spellcheck="false" autocomplete="off" placeholder="kaelri/hy-mt2:1.8b-q4_K_M"></label>
+          <label class="field">提示词方式<select id="prompt-style"><option value="hymt">HY-MT 专用翻译提示词</option><option value="general">通用模型翻译提示词</option></select></label>
+          <div class="local-note"><span>直连 Ollama 前先允许扩展访问</span><code>OLLAMA_ORIGINS="chrome-extension://*"</code><small>设置后重启 Ollama。模型在另一台机器、或要用无 CC 视频的语音转写时，改用连接助手：</small><code id="relay-command">npm run relay</code></div>
+          <div class="action-row"><button type="submit" class="primary">保存模型设置 <span>✓</span></button><button type="button" id="test-connection" class="secondary">测试翻译</button></div>
+        </form>
+        <div class="test-result" id="test-result" role="status" hidden></div>
+        <p class="privacy-note">文本只发往你配置的本机或局域网模型，不经过任何云端服务。</p>
+      </section>
+      <section id="panel-display" class="panel" hidden>
+        <div class="section-intro"><div class="eyebrow">让字幕，刚刚好</div><h2>阅读不费力</h2><p>全屏播放时也能保持清晰。</p></div>
+        <div class="subtitle-preview" id="subtitle-preview"><div class="preview-scene"><span>PLAY / LEARN / UNDERSTAND</span><b>Ideas travel.<br>Understanding follows.</b></div><div class="sample-captions"><span class="sample-source">A little context changes everything.</span><span class="sample-target">多一点语境，理解就不一样。</span></div><div class="preview-time">20:21 <span>━━━━━━━━━━━━</span> 1:09:41</div></div>
+        <div class="settings-card">
+          <label class="range-setting"><span>原文字号 <output id="size-value">22 px</output></span><input type="range" min="14" max="36" id="subtitle-size" aria-label="原文字号"></label>
+          <label class="range-setting"><span>距播放器底部 <output id="bottom-value">8%</output></span><input type="range" min="3" max="25" id="subtitle-bottom" aria-label="字幕底部距离"></label>
+          <label class="range-setting"><span>字幕预译范围 <output id="ahead-value">20 秒</output></span><input type="range" min="5" max="60" step="5" id="look-ahead" aria-label="字幕预译范围"></label>
+        </div>
+        <p class="quiet">获取到完整时间轴时提前翻译后续字幕；否则实时翻译当前 CC。预译范围越大，模型调用越多。</p>
+        <button class="primary full" id="save-display">保存字幕样式 <span>✓</span></button>
+        <button class="text-button" id="clear-cache">清空本次后台翻译缓存</button>
+      </section>
+    </main>
+    <footer><span><i></i> 本地优先 · 无账号</span><span>译伴 / 0.2</span></footer>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </div>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+release/
+.env*
+*.log
+.DS_Store
+test-results/
+/background.js
+/popup.js
+/content.js
+/bridge.js
+/offscreen.js
+/assets/icon*.png
+server/cache/
+__pycache__/

@@ -1,0 +1,23 @@
+{
+  "name": "yiban-lite",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "dev": "node scripts/preview.mjs",
+    "verify:flow": "npm run build && node scripts/verify-flow.mjs",
+    "package": "npm run build && node scripts/package.mjs",
+    "verify:asr": "npm run build && node scripts/verify-asr.mjs",
+    "deploy:asr": "sh server/deploy.sh",
+    "relay": "node scripts/relay.mjs",
+    "verify:model": "node scripts/verify-model.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "jsdom": "^26.0.0"
+  },
+  "description": "用本地小模型（Ollama 等）给 YouTube 加双语字幕、给网页加对照译文的 Chrome 扩展",
+  "license": "MIT"
+}
